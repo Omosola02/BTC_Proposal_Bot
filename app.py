@@ -35,13 +35,6 @@ st.markdown(
         text-align: center;
         margin-bottom: 30px;
     }
-    .stButton>button {
-        background-color: #FF4B4B;
-        color: white;
-        font-weight: bold;
-        border-radius: 8px;
-        padding: 10px 20px;
-    }
     .feedback-box {
         background-color: #1E1E1E;
         padding: 20px;
@@ -193,6 +186,8 @@ if review_mode == "📁 Option A: Upload Proposal Document":
   )
 
   if uploaded_file is not None:
+    st.success(f"✅ Successfully uploaded: **{uploaded_file.name}**")
+
     file_content = ""
     file_extension = uploaded_file.name.split(".")[-1].lower()
 
@@ -224,27 +219,42 @@ if review_mode == "📁 Option A: Upload Proposal Document":
     except Exception as e:
       st.error(f"Error reading file: {e}")
 
-    if st.button("🔍 Run Analytical Proposal Review"):
-      if len(file_content.strip()) < 20:
-        st.warning(
-            "The uploaded file seems empty or could not be read properly. Please"
-            " check the file contents."
+    if file_content.strip():
+      with st.expander("📄 Click here to preview extracted text"):
+        st.text_area(
+            "Extracted Text Preview",
+            file_content[:1500]
+            + ("..." if len(file_content) > 1500 else ""),
+            height=150,
         )
-      else:
-        st.success("Document Read & Analyzed Successfully!")
-        st.markdown("### 📊 Comprehensive Analytical Report")
-        generate_analytical_feedback(
-            "1. Background / Executive Summary", file_content
-        )
-        generate_analytical_feedback("2. Problem Statement", file_content)
-        generate_analytical_feedback("3. The Innovative Solution", file_content)
-        generate_analytical_feedback("4. SMART Objectives", file_content)
-        generate_analytical_feedback(
-            "5. Logic Framework & Implementation Plan", file_content
-        )
-        generate_analytical_feedback(
-            "6. M&E, Budget & Sustainability Plan", file_content
-        )
+
+      # Prominent button to trigger evaluation
+      if st.button(
+          "🔍 Run Analytical Proposal Review", type="primary", use_container_width=True
+      ):
+        with st.spinner(
+            "Analyzing your proposal against BTC framework indicators..."
+        ):
+          st.success("Document Analyzed Successfully!")
+          st.markdown("### 📊 Comprehensive Analytical Report")
+          generate_analytical_feedback(
+              "1. Background / Executive Summary", file_content
+          )
+          generate_analytical_feedback("2. Problem Statement", file_content)
+          generate_analytical_feedback("3. The Innovative Solution", file_content)
+          generate_analytical_feedback("4. SMART Objectives", file_content)
+          generate_analytical_feedback(
+              "5. Logic Framework & Implementation Plan", file_content
+          )
+          generate_analytical_feedback(
+              "6. M&E, Budget & Sustainability Plan", file_content
+          )
+    else:
+      st.warning(
+          "⚠️ Could not extract readable text from this file. Please make sure"
+          " it contains text (not scanned images) or use Option B to type it"
+          " in."
+      )
 
 else:
   st.subheader("Fill in Your Proposal Subheadings")
@@ -262,7 +272,9 @@ else:
     budget_plan = st.text_area("8. The Budget and Fundraising Plan")
     sus_plan = st.text_area("9. The Sustainability Plan")
 
-    submitted = st.form_submit_button("🔍 Run Analytical Proposal Review")
+    submitted = st.form_submit_button(
+        "🔍 Run Analytical Proposal Review", use_container_width=True
+    )
 
   if submitted:
     st.success("Sections Evaluated Successfully!")
@@ -285,3 +297,4 @@ else:
         "8. The Budget and Fundraising Plan", budget_plan
     )
     generate_analytical_feedback("9. The Sustainability Plan", sus_plan)
+    
