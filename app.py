@@ -128,17 +128,6 @@ else:
   st.subheader("Fill in Your Proposal Subheadings")
 
   with st.form("proposal_form"):
-    st.markdown("### 📌 General Information")
-    col1, col2 = st.columns(2)
-    with col1:
-      proj_name = st.text_input("Project Name")
-      proj_category = st.text_input("Project Category")
-      team_names = st.text_input("Team Lead & Members' Names")
-    with col2:
-      lead_phone = st.text_input("Phone Number (Lead)")
-      lead_email = st.text_input("Email Address (Lead)")
-
-    st.markdown("---")
     st.markdown("### 📝 Proposal Core Sections")
 
     bg_summary = st.text_area("1. Background / Executive Summary")
